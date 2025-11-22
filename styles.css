@@ -21,6 +21,125 @@ body {
     color: var(--navy);
     background-color: var(--white);
     overflow-x: hidden;
+    position: relative;
+}
+
+/* ===== PAGE SKELETON LOADER ===== */
+.page-skeleton {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--white);
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.skeleton-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #020099 100%);
+    padding: 120px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    position: relative;
+}
+
+.skeleton-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 30% 40%, rgba(213, 173, 54, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.skeleton-ornament {
+    width: 50px;
+    height: 50px;
+    background: rgba(213, 173, 54, 0.2);
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-title {
+    width: 350px;
+    height: 60px;
+    background: rgba(213, 173, 54, 0.2);
+    border-radius: 8px;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-divider {
+    width: 100px;
+    height: 4px;
+    background: rgba(213, 173, 54, 0.3);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-subtitle {
+    width: 280px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-content {
+    max-width: 800px;
+    margin: 80px auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+}
+
+.skeleton-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 50px 40px;
+    box-shadow: 0 10px 30px var(--shadow);
+    min-height: 280px;
+}
+
+.skeleton-line {
+    height: 24px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-line:last-child {
+    margin-bottom: 0;
+}
+
+.skeleton-line.short {
+    width: 65%;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.main-content.hidden {
+    display: none;
+}
+
+.page-skeleton.hidden {
+    display: none;
 }
 
 /* ===== TYPOGRAPHY ===== */
@@ -538,6 +657,30 @@ h1, h2, h3, h4 {
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
+    .skeleton-hero {
+        padding: 80px 20px;
+    }
+
+    .skeleton-title {
+        width: 280px;
+        height: 50px;
+    }
+
+    .skeleton-subtitle {
+        width: 220px;
+        height: 28px;
+    }
+
+    .skeleton-content {
+        margin: 60px auto;
+        gap: 40px;
+    }
+
+    .skeleton-card {
+        padding: 40px 20px;
+        min-height: 240px;
+    }
+
     .graduate-name {
         font-size: 2.2rem;
     }

@@ -16,6 +16,8 @@ const signatureNameElement = document.querySelector('.signature-name');
 const messageLoader = document.getElementById('messageLoader');
 const messageContent = document.getElementById('messageContent');
 const occasionText = document.getElementById('occasionText');
+const pageSkeleton = document.getElementById('pageSkeleton');
+const mainContent = document.getElementById('mainContent');
 
 // ===== FORM VALIDATION =====
 function validateForm() {
@@ -230,7 +232,7 @@ async function fetchPersonalizedMessage() {
 
             // Optionally add a personal greeting to the signature
             if (signatureNameElement) {
-                signatureNameElement.innerHTML = `Nguyễn Hồng Quân<br><small style="font-size: 0.9rem; opacity: 0.8;">Gửi đến ${data.inviter}</small>`;
+                signatureNameElement.innerHTML = `Quân<br><small style="font-size: 0.9rem; opacity: 0.8;">Gửi đến ${data.inviter}</small>`;
             }
         }
     } catch (error) {
@@ -245,7 +247,25 @@ async function fetchPersonalizedMessage() {
     }
 }
 
+// ===== HIDE SKELETON AND SHOW CONTENT =====
+function showContent() {
+    if (pageSkeleton && mainContent) {
+        pageSkeleton.classList.add('hidden');
+        mainContent.classList.remove('hidden');
+    }
+}
+
 // ===== LOAD PERSONALIZED MESSAGE ON PAGE LOAD =====
-document.addEventListener('DOMContentLoaded', () => {
-    fetchPersonalizedMessage();
+document.addEventListener('DOMContentLoaded', async () => {
+    // Get inviter parameter to check if we need to wait for personalization
+    const urlParams = new URLSearchParams(window.location.search);
+    const inviter = urlParams.get('inviter');
+
+    if (inviter && GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+        // Wait for personalized message to load before showing content
+        await fetchPersonalizedMessage();
+    }
+
+    // Show content after personalization (or immediately if no inviter)
+    showContent();
 });
