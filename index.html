@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +8,11 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lora:wght@400;500;600&family=Noto+Serif:wght@400;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lora:wght@400;500;600&family=Noto+Serif:wght@400;600&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <!-- Hero Section -->
     <section class="hero">
@@ -16,7 +20,7 @@
         <div class="container">
             <h1 class="graduate-name">Nguyễn Hồng Quân</h1>
             <div class="divider"></div>
-            <h2 class="occasion">Kính mời quý khách tham dự</h2>
+            <h2 class="occasion">Mời bạn/anh/chị đến tham dự</h2>
             <h3 class="event-title">Lễ Tốt Nghiệp Đại Học</h3>
         </div>
         <div class="ornament bottom-ornament">✦</div>
@@ -50,11 +54,11 @@
     <section class="message">
         <div class="container">
             <div class="message-card">
-                <p class="message-text">
-                    Sau những năm tháng miệt mài trên giảng đường đại học, đây là khoảnh khắc đánh dấu một cột mốc quan trọng trong cuộc đời. Sự hiện diện của bạn sẽ là niềm vinh hạnh và là nguồn động viên lớn lao đối với tôi.
+                <p class="message-text" id="personalMessage">
+                    Sau một hành trình với thật nhiều kỷ niệm, ngày tốt nghiệp của Quân đã đến!
                 </p>
                 <p class="message-text">
-                    Rất mong được đón tiếp bạn tại buổi lễ trang trọng này!
+                    Sự hiện diện của anh/chị/bạn sẽ là niềm vui rất lớn và giúp buổi lễ trở nên trọn vẹn hơn.
                 </p>
                 <div class="signature">
                     <p>Trân trọng,</p>
@@ -72,23 +76,12 @@
                 <form id="rsvpForm">
                     <div class="form-group">
                         <label for="friendName">Họ và tên <span class="required">*</span></label>
-                        <input
-                            type="text"
-                            id="friendName"
-                            name="friendName"
-                            placeholder="Nhập họ tên của bạn"
-                            required
-                        >
+                        <input type="text" id="friendName" name="friendName" placeholder="Nhập họ tên của bạn" required>
                     </div>
 
                     <div class="form-group checkbox-group">
                         <label class="checkbox-label">
-                            <input
-                                type="checkbox"
-                                id="willAttend"
-                                name="willAttend"
-                                required
-                            >
+                            <input type="checkbox" id="willAttend" name="willAttend" required>
                             <span class="checkbox-text">Vâng, tôi sẽ tham dự</span>
                         </label>
                     </div>
@@ -108,9 +101,11 @@
     <footer class="footer">
         <div class="container">
             <p>© 2025 Nguyễn Hồng Quân | Lễ Tốt Nghiệp</p>
+            <p class="footer-contact">Liên hệ: <a href="tel:0773534125">0773 534 125</a></p>
         </div>
     </footer>
 
     <script src="script.js"></script>
 </body>
+
 </html>

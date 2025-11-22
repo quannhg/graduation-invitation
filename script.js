@@ -11,6 +11,8 @@ const submitBtn = document.getElementById('submitBtn');
 const btnText = document.querySelector('.btn-text');
 const btnLoader = document.querySelector('.btn-loader');
 const formMessage = document.getElementById('formMessage');
+const messageTextElements = document.querySelectorAll('.message-text');
+const signatureNameElement = document.querySelector('.signature-name');
 
 // ===== FORM VALIDATION =====
 function validateForm() {
@@ -170,4 +172,48 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             });
         }
     });
+});
+
+// ===== FETCH PERSONALIZED MESSAGE =====
+async function fetchPersonalizedMessage() {
+    try {
+        // Get inviter parameter from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const inviter = urlParams.get('inviter');
+
+        if (!inviter) {
+            // No inviter parameter, use default message
+            return;
+        }
+
+        // Check if Google Script URL is configured
+        if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+            console.warn('Google Apps Script URL not configured');
+            return;
+        }
+
+        // Fetch personalized message
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?inviter=${encodeURIComponent(inviter)}`);
+        const data = await response.json();
+
+        if (data.status === 'success' && data.hasCustomMessage && data.message) {
+            // Replace the first message paragraph with custom message
+            if (messageTextElements.length > 0) {
+                messageTextElements[0].textContent = data.message;
+            }
+
+            // Optionally add a personal greeting to the signature
+            if (signatureNameElement) {
+                signatureNameElement.innerHTML = `Nguyễn Hồng Quân<br><small style="font-size: 0.9rem; opacity: 0.8;">Gửi đến ${data.inviter}</small>`;
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching personalized message:', error);
+        // Silently fail and use default message
+    }
+}
+
+// ===== LOAD PERSONALIZED MESSAGE ON PAGE LOAD =====
+document.addEventListener('DOMContentLoaded', () => {
+    fetchPersonalizedMessage();
 });

@@ -21,6 +21,7 @@ An elegant, traditional Vietnamese-style graduation ceremony invitation website 
 - **Responsive Layout**: Works perfectly on desktop, tablet, and mobile devices
 - **RSVP Form**: Collects guest names and attendance confirmation
 - **Google Sheets Integration**: Automatically stores responses in a spreadsheet
+- **Personalized Messages**: Display custom messages for specific guests via URL parameters
 - **Form Validation**: Ensures all required fields are filled correctly
 - **User Feedback**: Shows success/error messages after form submission
 - **Privacy-Focused**: No API keys exposed in frontend code
@@ -250,6 +251,46 @@ Edit the message section in `index.html`:
 </p>
 ```
 
+### Setting Up Personalized Messages for Guests
+
+You can create custom messages for specific guests that appear when they visit a personalized URL.
+
+#### Step 1: Create Personalized Messages Sheet
+
+1. Open your Google Spreadsheet
+2. In the Apps Script editor, select the function `initializeMessagesSheet`
+3. Click **Run** (▶️)
+4. A new sheet called "Personalized Messages" will be created with example data
+
+#### Step 2: Add Custom Messages
+
+In the "Personalized Messages" sheet, add rows with:
+
+| Inviter Name | Custom Message |
+|--------------|----------------|
+| Minh | Bạn là người bạn thân thiết nhất của tôi từ năm nhất. Cảm ơn vì đã luôn bên tôi! |
+| Lan | Không có bạn, tôi không thể vượt qua những kỳ thi khó khăn. |
+
+#### Step 3: Share Personalized Links
+
+Send personalized URLs to your guests:
+
+```
+https://your-website.com/?inviter=Minh
+https://your-website.com/?inviter=Lan
+```
+
+**How it works:**
+- When someone visits with `?inviter=Name` parameter, the script fetches their custom message
+- If found, the first paragraph is replaced with their personalized message
+- If not found or no parameter, the default message is shown
+- The signature adds "Gửi đến [Name]" for a personal touch
+
+**Tips:**
+- Names are case-insensitive (Minh = minh = MINH)
+- Use URL encoding for names with spaces: `?inviter=Nguyen%20Van%20A`
+- Leave the "Custom Message" column empty to use default message
+
 ---
 
 ## 🧪 Testing
@@ -279,6 +320,12 @@ Edit the message section in `index.html`:
     - Timestamp
     - Name
     - Attendance status
+
+- [ ] **Personalized Messages**:
+  - Create test entries in "Personalized Messages" sheet
+  - Visit `your-website.com/?inviter=TestName`
+  - Verify custom message appears
+  - Visit without parameter → Should show default message
 
 - [ ] **Cross-Browser Testing**:
   - Chrome
