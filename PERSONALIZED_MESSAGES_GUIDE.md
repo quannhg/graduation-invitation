@@ -56,10 +56,10 @@ Instead of sending the same generic invitation to everyone, you can create **cus
 
 You'll see a table with 2 columns:
 
-| Inviter Name | Custom Message |
-|--------------|----------------|
-| Minh | Bạn là người bạn thân thiết nhất của tôi từ năm nhất. Cảm ơn vì đã luôn bên tôi trong suốt hành trình này! |
-| Lan | Không có bạn, tôi không thể vượt qua những kỳ thi khó khăn. Rất mong được gặp bạn tại buổi lễ! |
+| URL Param | Display Name | Custom Message |
+|-----------|--------------|----------------|
+| minh | Minh | Bạn là người bạn thân thiết nhất của tôi từ năm nhất. Cảm ơn vì đã luôn bên tôi trong suốt hành trình này! |
+| lan | Lan Anh | Không có bạn, tôi không thể vượt qua những kỳ thi khó khăn. Rất mong được gặp bạn tại buổi lễ! |
 
 These are **example entries** to show you how it works.
 
@@ -69,26 +69,34 @@ These are **example entries** to show you how it works.
 
 Now it's time to add messages for your real guests!
 
-1. **Delete the example rows** (Minh and Lan) if you don't need them
+1. **Delete the example rows** if you don't need them
 2. **Add new rows** for each guest you want to personalize:
 
-**Column A - Inviter Name:**
-- Enter the guest's name exactly as you want it to appear
-- Examples: `Tuấn`, `Ngọc Anh`, `Hoàng`, `Minh Châu`
+**Column A - URL Param:**
+- Short, URL-friendly identifier for this guest
+- Use lowercase, no spaces (use hyphens for multiple words)
+- Examples: `tuan`, `ngoc-anh`, `hoang`, `minh-chau`
+- This is what goes in the URL: `?inviter=tuan`
 
-**Column B - Custom Message:**
+**Column B - Display Name:**
+- The guest's full name as you want it to appear on the website
+- Can include proper capitalization, spaces, Vietnamese characters
+- Examples: `Tuấn`, `Ngọc Anh`, `Hoàng`, `Minh Châu`
+- This appears in "Gửi đến [Display Name]"
+
+**Column C - Custom Message:**
 - Write a personal message for this specific guest
 - Be heartfelt and genuine!
 - Keep it 1-3 sentences for best readability
 
 **Example entries:**
 
-| Inviter Name | Custom Message |
-|--------------|----------------|
-| Tuấn | Cậu là người đã động viên tôi nhiều nhất trong những ngày tháng khó khăn. Không có cậu, hôm nay tôi không thể đứng ở đây được! |
-| Ngọc Anh | Từ năm nhất đến giờ, chúng ta đã cùng nhau vượt qua bao nhiêu kỳ thi và dự án. Cảm ơn vì đã là người bạn đồng hành tuyệt vời! |
-| Hoàng | Những buổi học nhóm cùng cậu luôn là kỷ niệm đáng nhớ nhất. Rất mong được ăn mừng cùng cậu trong ngày đặc biệt này! |
-| Minh Châu | Em là người em gái mà anh luôn tự hào. Cảm ơn em đã luôn tin tưởng và ủng hộ anh! |
+| URL Param | Display Name | Custom Message |
+|-----------|--------------|----------------|
+| tuan | Tuấn | Cậu là người đã động viên tôi nhiều nhất trong những ngày tháng khó khăn. Không có cậu, hôm nay tôi không thể đứng ở đây được! |
+| ngoc-anh | Ngọc Anh | Từ năm nhất đến giờ, chúng ta đã cùng nhau vượt qua bao nhiêu kỳ thi và dự án. Cảm ơn vì đã là người bạn đồng hành tuyệt vời! |
+| hoang | Hoàng | Những buổi học nhóm cùng cậu luôn là kỷ niệm đáng nhớ nhất. Rất mong được ăn mừng cùng cậu trong ngày đặc biệt này! |
+| minh-chau | Minh Châu | Em là người em gái mà anh luôn tự hào. Cảm ơn em đã luôn tin tưởng và ủng hộ anh! |
 
 ---
 
@@ -139,7 +147,7 @@ Now send these personalized URLs to your guests via:
 Chào Tuấn,
 
 Mình rất vui được mời cậu đến dự lễ tốt nghiệp của mình!
-Nhấn vào link này để xem lời mời: https://your-site.com/?inviter=Tuấn
+Nhấn vào link này để xem lời mời: https://your-site.com/?inviter=tuan
 
 Mong được gặp cậu!
 Quân
@@ -172,14 +180,14 @@ And the signature shows:
 ### Test Locally (if using `npx serve`):
 
 1. Make sure your server is running: `npx serve`
-2. Open: `http://localhost:3000/?inviter=Tuấn`
-3. You should see Tuấn's custom message
+2. Open: `http://localhost:3000/?inviter=tuan`
+3. You should see the custom message with "Tuấn" displayed
 
 ### Test on Live Website:
 
 1. Deploy your website (Netlify, Vercel, GitHub Pages)
-2. Open: `https://your-site.com/?inviter=Tuấn`
-3. Verify the custom message appears
+2. Open: `https://your-site.com/?inviter=tuan`
+3. Verify the custom message appears with "Tuấn" as the display name
 
 ---
 
@@ -187,9 +195,10 @@ And the signature shows:
 
 ### ✓ Name Matching Rules
 
-- **Case insensitive**: `Tuấn`, `tuấn`, `TUẤN` all match the same entry
-- **Exact spelling**: Make sure the name in the URL matches the "Inviter Name" column exactly
-- **Spaces**: `Ngọc Anh` = `Ngọc%20Anh` in URL
+- **Case insensitive**: `tuan`, `Tuan`, `TUAN` all match the same entry
+- **Exact spelling**: Make sure the URL param matches the "URL Param" column exactly
+- **Use hyphens for spaces**: `ngoc-anh` instead of `Ngọc Anh`
+- **URL encoding**: If you must use spaces, they become `%20` in URLs
 
 ### ✓ What If No Match?
 

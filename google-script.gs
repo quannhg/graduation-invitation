@@ -111,16 +111,17 @@ function doGet(e) {
     // Skip header row and search for inviter
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
-      const inviterName = row[0] ? row[0].toString().trim().toLowerCase() : '';
-      const customMessage = row[1] ? row[1].toString().trim() : '';
+      const urlParam = row[0] ? row[0].toString().trim().toLowerCase() : '';
+      const displayName = row[1] ? row[1].toString().trim() : '';
+      const customMessage = row[2] ? row[2].toString().trim() : '';
 
-      // Case-insensitive match
-      if (inviterName === inviter.toLowerCase() && customMessage) {
+      // Case-insensitive match on URL parameter
+      if (urlParam === inviter.toLowerCase() && customMessage) {
         return ContentService
           .createTextOutput(JSON.stringify({
             status: 'success',
             hasCustomMessage: true,
-            inviter: row[0],
+            inviter: displayName || row[0], // Use display name, fallback to URL param
             message: customMessage
           }))
           .setMimeType(ContentService.MimeType.JSON);
@@ -159,28 +160,38 @@ function initializeMessagesSheet() {
     messagesSheet = spreadsheet.insertSheet(MESSAGES_SHEET_NAME);
 
     // Add headers
-    messagesSheet.appendRow(['Inviter Name', 'Custom Message']);
+    messagesSheet.appendRow(['URL Param', 'Display Name', 'Custom Message']);
 
     // Format headers
-    const headerRange = messagesSheet.getRange(1, 1, 1, 2);
+    const headerRange = messagesSheet.getRange(1, 1, 1, 3);
     headerRange.setFontWeight('bold');
     headerRange.setBackground('#010079');
     headerRange.setFontColor('#FFFFFF');
 
     // Add example data
     messagesSheet.appendRow([
+      'minh',
       'Minh',
       'Bạn là người bạn thân thiết nhất của tôi từ năm nhất. Cảm ơn vì đã luôn bên tôi trong suốt hành trình này!'
     ]);
 
     messagesSheet.appendRow([
-      'Lan',
+      'lan',
+      'Lan Anh',
       'Không có bạn, tôi không thể vượt qua những kỳ thi khó khăn. Rất mong được gặp bạn tại buổi lễ!'
     ]);
 
+    messagesSheet.appendRow([
+      'tuan-nguyen',
+      'Tuấn Nguyễn',
+      'Những đêm thức khuya làm dự án cùng cậu là kỷ niệm không thể quên. Hẹn gặp cậu nhé!'
+    ]);
+
     // Auto-resize columns
-    messagesSheet.autoResizeColumns(1, 2);
-    messagesSheet.setColumnWidth(2, 400);
+    messagesSheet.autoResizeColumns(1, 3);
+    messagesSheet.setColumnWidth(1, 120); // URL Param
+    messagesSheet.setColumnWidth(2, 150); // Display Name
+    messagesSheet.setColumnWidth(3, 400); // Custom Message
 
     SpreadsheetApp.getUi().alert('Personalized Messages sheet created with example data!');
   } else {

@@ -1,7 +1,7 @@
 // ===== CONFIGURATION =====
 // Replace this URL with your deployed Google Apps Script Web App URL
 // https://docs.google.com/spreadsheets/d/1F7quDFWsAij1RxuKT-pPVlxhNyDh3RuXCa8M_neAY8w/edit?usp=sharing
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUxPXL_XnJxAT69790E8LjJrjlsTGdoszoD1ldatnVjg_i3l7XW3klIrE1esVQZOxrRA/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_Ahh6pHa6ObqK87Jr-BqOQfFJRIFbZfONsEGxZ0Qp0j5NWmiLdHh11SvLEUFs01MjyA/exec';
 
 // ===== DOM ELEMENTS =====
 const form = document.getElementById('rsvpForm');
