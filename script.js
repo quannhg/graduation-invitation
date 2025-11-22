@@ -216,16 +216,16 @@ async function fetchPersonalizedMessage() {
                 messageTextElements[0].textContent = data.message;
             }
 
+            // Replace "anh/chị/bạn" with display name in second paragraph
+            if (messageTextElements.length > 1 && data.inviter) {
+                const secondMessage = messageTextElements[1].textContent;
+                messageTextElements[1].textContent = secondMessage.replace('anh/chị/bạn', data.inviter);
+            }
+
             // Optionally add a personal greeting to the signature
             if (signatureNameElement) {
                 signatureNameElement.innerHTML = `Nguyễn Hồng Quân<br><small style="font-size: 0.9rem; opacity: 0.8;">Gửi đến ${data.inviter}</small>`;
             }
-        }
-
-        // Replace "anh/chị/bạn" with inviter's name in second paragraph
-        if (messageTextElements.length > 1 && inviter) {
-            const secondMessage = messageTextElements[1].textContent;
-            messageTextElements[1].textContent = secondMessage.replace('anh/chị/bạn', inviter);
         }
     } catch (error) {
         console.error('Error fetching personalized message:', error);
