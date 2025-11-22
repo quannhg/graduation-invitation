@@ -520,10 +520,12 @@ h1, h2, h3, h4 {
 }
 
 .radio-label {
+    position: relative;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    gap: 12px;
     cursor: pointer;
-    padding: 16px 20px;
+    padding: 16px 20px 16px 52px;
     background: var(--light-gray);
     border-radius: 8px;
     border: 2px solid #e9ecef;
@@ -536,9 +538,13 @@ h1, h2, h3, h4 {
 }
 
 .radio-label input[type="radio"] {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
     width: 20px;
     height: 20px;
-    margin: 0 12px 0 0;
+    margin: 0;
     cursor: pointer;
     accent-color: var(--red-orange);
     flex-shrink: 0;
@@ -557,8 +563,8 @@ h1, h2, h3, h4 {
 .radio-text {
     font-size: 1rem;
     color: var(--navy);
-    line-height: 1.4;
-    display: inline-block;
+    line-height: 20px;
+    word-break: break-word;
 }
 
 .submit-btn {
