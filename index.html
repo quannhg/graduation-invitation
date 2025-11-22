@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lễ Tốt Nghiệp - Nguyễn Hồng Quân</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lora:wght@400;500;600&family=Noto+Serif:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="ornament top-ornament">✦</div>
+        <div class="container">
+            <h1 class="graduate-name">Nguyễn Hồng Quân</h1>
+            <div class="divider"></div>
+            <h2 class="occasion">Kính mời quý khách tham dự</h2>
+            <h3 class="event-title">Lễ Tốt Nghiệp Đại Học</h3>
+        </div>
+        <div class="ornament bottom-ornament">✦</div>
+    </section>
+
+    <!-- Event Details Section -->
+    <section class="event-details">
+        <div class="container">
+            <div class="details-card">
+                <div class="detail-item">
+                    <div class="icon">🕐</div>
+                    <div class="detail-content">
+                        <h4>Thời gian</h4>
+                        <p>14:45 – 29/11/2025</p>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="icon">📍</div>
+                    <div class="detail-content">
+                        <h4>Địa điểm</h4>
+                        <p>Hội trường A5</p>
+                        <p class="address-detail">268 Lý Thường Kiệt, Phường 14, Quận 10</p>
+                        <p class="address-detail">TP. Hồ Chí Minh</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Personal Message Section -->
+    <section class="message">
+        <div class="container">
+            <div class="message-card">
+                <p class="message-text">
+                    Sau những năm tháng miệt mài trên giảng đường đại học, đây là khoảnh khắc đánh dấu một cột mốc quan trọng trong cuộc đời. Sự hiện diện của bạn sẽ là niềm vinh hạnh và là nguồn động viên lớn lao đối với tôi.
+                </p>
+                <p class="message-text">
+                    Rất mong được đón tiếp bạn tại buổi lễ trang trọng này!
+                </p>
+                <div class="signature">
+                    <p>Trân trọng,</p>
+                    <p class="signature-name">Nguyễn Hồng Quân</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RSVP Form Section -->
+    <section class="rsvp-section">
+        <div class="container">
+            <h2 class="section-title">Xác nhận tham dự</h2>
+            <div class="form-card">
+                <form id="rsvpForm">
+                    <div class="form-group">
+                        <label for="friendName">Họ và tên <span class="required">*</span></label>
+                        <input
+                            type="text"
+                            id="friendName"
+                            name="friendName"
+                            placeholder="Nhập họ tên của bạn"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input
+                                type="checkbox"
+                                id="willAttend"
+                                name="willAttend"
+                                required
+                            >
+                            <span class="checkbox-text">Vâng, tôi sẽ tham dự</span>
+                        </label>
+                    </div>
+
+                    <div id="formMessage" class="form-message hidden"></div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <span class="btn-text">Gửi xác nhận</span>
+                        <span class="btn-loader hidden">Đang gửi...</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 Nguyễn Hồng Quân | Lễ Tốt Nghiệp</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
