@@ -42,8 +42,11 @@
                     <div class="detail-content">
                         <h4>Địa điểm</h4>
                         <p>Hội trường A5</p>
-                        <p class="address-detail">268 Lý Thường Kiệt, Phường 14, Quận 10</p>
-                        <p class="address-detail">TP. Hồ Chí Minh</p>
+                        <a href="https://maps.app.goo.gl/dyk7STNj5TGxWvav9" target="_blank" rel="noopener noreferrer" class="address-link">
+                            <p class="address-detail">268 Lý Thường Kiệt, Phường 14, Quận 10</p>
+                            <p class="address-detail">TP. Hồ Chí Minh</p>
+                            <span class="map-badge">📍 Xem bản đồ</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -54,15 +57,21 @@
     <section class="message">
         <div class="container">
             <div class="message-card">
-                <p class="message-text" id="personalMessage">
-                    Sau một hành trình với thật nhiều kỷ niệm, ngày tốt nghiệp của Quân đã đến!
-                </p>
-                <p class="message-text">
-                    Sự hiện diện của anh/chị/bạn sẽ là niềm vui rất lớn và giúp buổi lễ trở nên trọn vẹn hơn.
-                </p>
-                <div class="signature">
-                    <p>Trân trọng,</p>
-                    <p class="signature-name">Nguyễn Hồng Quân</p>
+                <div id="messageLoader" class="message-loader hidden">
+                    <div class="spinner"></div>
+                    <p>Hehe, chờ 1 xíu ...</p>
+                </div>
+                <div id="messageContent">
+                    <p class="message-text" id="personalMessage">
+                        Sau một hành trình với thật nhiều kỷ niệm, ngày tốt nghiệp của Quân đã đến!
+                    </p>
+                    <p class="message-text">
+                        Sự hiện diện của anh/chị/bạn sẽ là niềm vui rất lớn và giúp buổi lễ trở nên trọn vẹn hơn.
+                    </p>
+                    <div class="signature">
+                        <p>Trân trọng,</p>
+                        <p class="signature-name">Nguyễn Hồng Quân</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,7 +99,10 @@
 
                     <button type="submit" class="submit-btn" id="submitBtn">
                         <span class="btn-text">Gửi xác nhận</span>
-                        <span class="btn-loader hidden">Đang gửi...</span>
+                        <span class="btn-loader hidden">
+                            <div class="spinner-small"></div>
+                            Đang gửi...
+                        </span>
                     </button>
                 </form>
             </div>
@@ -101,7 +113,14 @@
     <footer class="footer">
         <div class="container">
             <p>© 2025 Nguyễn Hồng Quân | Lễ Tốt Nghiệp</p>
-            <p class="footer-contact">Liên hệ: <a href="tel:0773534125">0773 534 125</a></p>
+            <div class="footer-links">
+                <p class="footer-contact">
+                    📞 <a href="tel:0773534125">0773 534 125</a>
+                </p>
+                <p class="footer-contact">
+                    👤 <a href="https://www.facebook.com/quannhg" target="_blank" rel="noopener noreferrer">Facebook</a>
+                </p>
+            </div>
         </div>
     </footer>
 

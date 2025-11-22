@@ -13,6 +13,8 @@ const btnLoader = document.querySelector('.btn-loader');
 const formMessage = document.getElementById('formMessage');
 const messageTextElements = document.querySelectorAll('.message-text');
 const signatureNameElement = document.querySelector('.signature-name');
+const messageLoader = document.getElementById('messageLoader');
+const messageContent = document.getElementById('messageContent');
 
 // ===== FORM VALIDATION =====
 function validateForm() {
@@ -130,7 +132,7 @@ form.addEventListener('submit', async (e) => {
 
     if (result.success) {
         showMessage(
-            `✓ Cảm ơn ${formData.name}! Xác nhận của bạn đã được ghi nhận. Rất mong được gặp bạn tại buổi lễ!`,
+            `✓ Cảm ơn ${formData.name}!. Rất mong được gặp bạn/anh/chị tại buổi lễ!`,
             'success'
         );
 
@@ -141,7 +143,7 @@ form.addEventListener('submit', async (e) => {
         }, 5000);
     } else {
         showMessage(
-            '✗ Đã xảy ra lỗi khi gửi xác nhận. Vui lòng thử lại sau hoặc liên hệ trực tiếp với chúng tôi.',
+            '✗ Đã xảy ra lỗi khi gửi xác nhận. Vui lòng thử lại sau hoặc liên hệ trực tiếp sdt/facebook ở cuối trang.',
             'error'
         );
     }
@@ -192,9 +194,21 @@ async function fetchPersonalizedMessage() {
             return;
         }
 
+        // Show loading spinner
+        if (messageLoader && messageContent) {
+            messageLoader.classList.remove('hidden');
+            messageContent.style.display = 'none';
+        }
+
         // Fetch personalized message
         const response = await fetch(`${GOOGLE_SCRIPT_URL}?inviter=${encodeURIComponent(inviter)}`);
         const data = await response.json();
+
+        // Hide loading spinner
+        if (messageLoader && messageContent) {
+            messageLoader.classList.add('hidden');
+            messageContent.style.display = 'block';
+        }
 
         if (data.status === 'success' && data.hasCustomMessage && data.message) {
             // Replace the first message paragraph with custom message
@@ -207,8 +221,20 @@ async function fetchPersonalizedMessage() {
                 signatureNameElement.innerHTML = `Nguyễn Hồng Quân<br><small style="font-size: 0.9rem; opacity: 0.8;">Gửi đến ${data.inviter}</small>`;
             }
         }
+
+        // Replace "anh/chị/bạn" with inviter's name in second paragraph
+        if (messageTextElements.length > 1 && inviter) {
+            const secondMessage = messageTextElements[1].textContent;
+            messageTextElements[1].textContent = secondMessage.replace('anh/chị/bạn', inviter);
+        }
     } catch (error) {
         console.error('Error fetching personalized message:', error);
+
+        // Hide loading spinner on error
+        if (messageLoader && messageContent) {
+            messageLoader.classList.add('hidden');
+            messageContent.style.display = 'block';
+        }
         // Silently fail and use default message
     }
 }

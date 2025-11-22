@@ -180,6 +180,40 @@ h1, h2, h3, h4 {
     color: #495057 !important;
 }
 
+.address-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-top: 4px;
+}
+
+.address-link:hover {
+    background-color: rgba(213, 173, 54, 0.1);
+}
+
+.address-link .address-detail {
+    margin: 2px 0;
+}
+
+.map-badge {
+    display: inline-block;
+    font-size: 0.9rem;
+    color: var(--red-orange);
+    font-weight: 600;
+    margin-top: 8px;
+    padding: 4px 12px;
+    background-color: rgba(220, 88, 42, 0.1);
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.address-link:hover .map-badge {
+    background-color: rgba(220, 88, 42, 0.2);
+}
+
 /* ===== MESSAGE SECTION ===== */
 .message {
     padding: 60px 20px;
@@ -192,6 +226,28 @@ h1, h2, h3, h4 {
     padding: 40px;
     box-shadow: 0 8px 25px var(--shadow);
     border-left: 4px solid var(--red-orange);
+    max-height: 500px;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* Custom scrollbar for message card */
+.message-card::-webkit-scrollbar {
+    width: 8px;
+}
+
+.message-card::-webkit-scrollbar-track {
+    background: rgba(1, 0, 121, 0.05);
+    border-radius: 4px;
+}
+
+.message-card::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    border-radius: 4px;
+}
+
+.message-card::-webkit-scrollbar-thumb:hover {
+    background: var(--red-orange);
 }
 
 .message-text {
@@ -217,6 +273,56 @@ h1, h2, h3, h4 {
     font-weight: 600;
     font-size: 1.2rem;
     color: var(--red-orange);
+}
+
+/* ===== MESSAGE LOADING SPINNER ===== */
+.message-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 60px 20px;
+    min-height: 200px;
+}
+
+.message-loader.hidden {
+    display: none;
+}
+
+.message-loader p {
+    color: var(--navy);
+    font-size: 1rem;
+    opacity: 0.7;
+}
+
+#messageContent {
+    width: 100%;
+}
+
+/* ===== SPINNER ANIMATIONS ===== */
+.spinner, .spinner-small {
+    border: 3px solid rgba(1, 0, 121, 0.1);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+}
+
+.spinner-small {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* ===== RSVP SECTION ===== */
@@ -304,14 +410,18 @@ h1, h2, h3, h4 {
 .checkbox-label input[type="checkbox"] {
     width: 20px;
     height: 20px;
-    margin-right: 12px;
+    margin: 0 12px 0 0;
     cursor: pointer;
     accent-color: var(--red-orange);
+    flex-shrink: 0;
+    vertical-align: middle;
 }
 
 .checkbox-text {
     font-size: 1rem;
     color: var(--navy);
+    line-height: 1;
+    display: inline-block;
 }
 
 .submit-btn {
@@ -348,7 +458,10 @@ h1, h2, h3, h4 {
 }
 
 .btn-loader {
-    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .btn-loader.hidden {
@@ -398,15 +511,24 @@ h1, h2, h3, h4 {
     margin: 5px 0;
 }
 
+.footer-links {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
 .footer-contact {
-    margin-top: 10px;
+    margin: 0;
 }
 
 .footer-contact a {
     color: var(--gold);
     text-decoration: none;
     font-weight: 600;
-    transition: opacity 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .footer-contact a:hover {
@@ -434,6 +556,7 @@ h1, h2, h3, h4 {
 
     .message-card {
         padding: 30px 20px;
+        max-height: 400px;
     }
 
     .form-card {
