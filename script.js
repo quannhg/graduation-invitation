@@ -15,6 +15,7 @@ const messageTextElements = document.querySelectorAll('.message-text');
 const signatureNameElement = document.querySelector('.signature-name');
 const messageLoader = document.getElementById('messageLoader');
 const messageContent = document.getElementById('messageContent');
+const occasionText = document.getElementById('occasionText');
 
 // ===== FORM VALIDATION =====
 function validateForm() {
@@ -220,6 +221,11 @@ async function fetchPersonalizedMessage() {
             if (messageTextElements.length > 1 && data.inviter) {
                 const secondMessage = messageTextElements[1].textContent;
                 messageTextElements[1].textContent = secondMessage.replace('anh/chị/bạn', data.inviter);
+            }
+
+            // Replace "bạn/anh/chị" in hero occasion text
+            if (occasionText && data.inviter) {
+                occasionText.textContent = `Mời ${data.inviter} đến tham dự`;
             }
 
             // Optionally add a personal greeting to the signature
