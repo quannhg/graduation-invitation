@@ -6,7 +6,8 @@ const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_Ahh6pHa6Ob
 // ===== DOM ELEMENTS =====
 const form = document.getElementById('rsvpForm');
 const friendNameInput = document.getElementById('friendName');
-const willAttendCheckbox = document.getElementById('willAttend');
+const willAttendYes = document.getElementById('willAttendYes');
+const willAttendNo = document.getElementById('willAttendNo');
 const submitBtn = document.getElementById('submitBtn');
 const btnText = document.querySelector('.btn-text');
 const btnLoader = document.querySelector('.btn-loader');
@@ -23,24 +24,29 @@ const mainContent = document.getElementById('mainContent');
 function validateForm() {
     // Clear previous custom validation messages
     friendNameInput.setCustomValidity('');
-    willAttendCheckbox.setCustomValidity('');
 
-    // Validate name field
-    const name = friendNameInput.value.trim();
-    if (!name) {
-        friendNameInput.setCustomValidity('Vui lòng nhập họ tên của bạn');
-        return false;
+    // Only validate name field if inviter is not present
+    if (!currentInviterData) {
+        // Validate name field
+        const name = friendNameInput.value.trim();
+        if (!name) {
+            friendNameInput.setCustomValidity('Vui lòng nhập họ tên của bạn');
+            return false;
+        }
+
+        if (name.length < 2) {
+            friendNameInput.setCustomValidity('Họ tên phải có ít nhất 2 ký tự');
+            return false;
+        }
     }
 
-    if (name.length < 2) {
-        friendNameInput.setCustomValidity('Họ tên phải có ít nhất 2 ký tự');
+    // Validate attendance radio buttons
+    if (!willAttendYes.checked && !willAttendNo.checked) {
+        willAttendYes.setCustomValidity('Vui lòng chọn trạng thái tham dự');
         return false;
-    }
-
-    // Validate attendance checkbox
-    if (!willAttendCheckbox.checked) {
-        willAttendCheckbox.setCustomValidity('Vui lòng xác nhận tham dự');
-        return false;
+    } else {
+        willAttendYes.setCustomValidity('');
+        willAttendNo.setCustomValidity('');
     }
 
     return true;
@@ -109,9 +115,16 @@ form.addEventListener('submit', async (e) => {
     }
 
     // Prepare form data
+    const attendance = willAttendYes.checked ? 'Có tham dự' : 'Không tham dự';
+
+    // Use inviter ID if available (unique identifier), otherwise use the entered name
+    const nameToSubmit = currentInviterData
+        ? currentInviterData.urlParam  // Use unique URL param (e.g., "tuan", "ngoc-anh")
+        : friendNameInput.value.trim(); // Use manually entered name
+
     const formData = {
-        name: friendNameInput.value.trim(),
-        attendance: willAttendCheckbox.checked ? 'Có tham dự' : 'Không tham dự',
+        name: nameToSubmit,
+        attendance: attendance,
         timestamp: new Date().toISOString()
     };
 
@@ -134,16 +147,24 @@ form.addEventListener('submit', async (e) => {
     setLoadingState(false);
 
     if (result.success) {
-        showMessage(
-            `✓ Cảm ơn ${formData.name}!. Rất mong được gặp bạn/anh/chị tại buổi lễ!`,
-            'success'
-        );
+        // Use display name for message (if available), otherwise use submitted name
+        const displayName = currentInviterData
+            ? currentInviterData.displayName  // Use full display name (e.g., "Tuấn Nguyễn")
+            : formData.name;                  // Use manually entered name
 
-        // Reset form after successful submission
-        setTimeout(() => {
-            form.reset();
-            hideMessage();
-        }, 5000);
+        // Customize message based on attendance choice
+        let successMessage = '';
+        if (attendance === 'Có tham dự') {
+            successMessage = `✓ Cảm ơn ${displayName}! Rất mong được gặp bạn tại buổi lễ!`;
+        } else {
+            successMessage = `✓ Cảm ơn ${displayName} đã phản hồi. Rất tiếc vì bạn không thể tham dự. Hy vọng sẽ có dịp gặp bạn sau!`;
+        }
+
+        showMessage(successMessage, 'success');
+
+        // Keep the form state after submission - don't reset
+        // This helps users understand their submission was successful
+        // and they can see what they selected
     } else {
         showMessage(
             '✗ Đã xảy ra lỗi khi gửi xác nhận. Vui lòng thử lại sau hoặc liên hệ trực tiếp sdt/facebook ở cuối trang.',
@@ -159,10 +180,14 @@ friendNameInput.addEventListener('input', () => {
     }
 });
 
-willAttendCheckbox.addEventListener('change', () => {
-    if (willAttendCheckbox.checked) {
-        willAttendCheckbox.setCustomValidity('');
-    }
+willAttendYes.addEventListener('change', () => {
+    willAttendYes.setCustomValidity('');
+    willAttendNo.setCustomValidity('');
+});
+
+willAttendNo.addEventListener('change', () => {
+    willAttendYes.setCustomValidity('');
+    willAttendNo.setCustomValidity('');
 });
 
 // ===== SMOOTH SCROLL FOR ANCHORS =====
@@ -255,6 +280,28 @@ function showContent() {
     }
 }
 
+// Store inviter data globally
+let currentInviterData = null;
+
+// ===== PREFILL FORM WITH INVITER NAME =====
+function prefillFormWithInviterData(inviterName) {
+    if (inviterName && friendNameInput) {
+        // Hide the name input field and its parent form-group
+        const nameFormGroup = friendNameInput.closest('.form-group');
+        if (nameFormGroup) {
+            nameFormGroup.style.display = 'none';
+        }
+
+        // Set the value but keep it hidden
+        friendNameInput.value = inviterName;
+
+        // Also pre-select "Yes" for better UX
+        if (willAttendYes) {
+            willAttendYes.checked = true;
+        }
+    }
+}
+
 // ===== LOAD PERSONALIZED MESSAGE ON PAGE LOAD =====
 document.addEventListener('DOMContentLoaded', async () => {
     // Get inviter parameter to check if we need to wait for personalization
@@ -264,6 +311,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (inviter && GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
         // Wait for personalized message to load before showing content
         await fetchPersonalizedMessage();
+
+        // Prefill form with inviter's display name if available
+        // The display name is set in fetchPersonalizedMessage via data.inviter
+        const urlParams2 = new URLSearchParams(window.location.search);
+        const inviterParam = urlParams2.get('inviter');
+
+        // Try to get the display name from the personalized data
+        // We need to fetch it again or store it globally
+        try {
+            const response = await fetch(`${GOOGLE_SCRIPT_URL}?inviter=${encodeURIComponent(inviterParam)}`);
+            const data = await response.json();
+
+            if (data.status === 'success' && data.inviter) {
+                currentInviterData = {
+                    urlParam: inviterParam,
+                    displayName: data.inviter
+                };
+                prefillFormWithInviterData(data.inviter);
+            }
+        } catch (error) {
+            console.log('Could not prefill form data');
+        }
     }
 
     // Show content after personalization (or immediately if no inviter)

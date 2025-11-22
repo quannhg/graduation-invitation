@@ -114,11 +114,18 @@
                         <input type="text" id="friendName" name="friendName" placeholder="Nhập họ tên của bạn" required>
                     </div>
 
-                    <div class="form-group checkbox-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="willAttend" name="willAttend" required>
-                            <span class="checkbox-text">Vâng, tôi sẽ tham dự</span>
-                        </label>
+                    <div class="form-group">
+                        <label>Trạng thái tham dự <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" id="willAttendYes" name="willAttend" value="yes" required>
+                                <span class="radio-text">Có, tôi sẽ tham dự</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" id="willAttendNo" name="willAttend" value="no" required>
+                                <span class="radio-text">Rất tiếc, tôi không thể tham dự</span>
+                            </label>
+                        </div>
                     </div>
 
                     <div id="formMessage" class="form-message hidden"></div>
