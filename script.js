@@ -1,7 +1,7 @@
 // ===== CONFIGURATION =====
 // Replace this URL with your deployed Google Apps Script Web App URL
 // https://docs.google.com/spreadsheets/d/1F7quDFWsAij1RxuKT-pPVlxhNyDh3RuXCa8M_neAY8w/edit?usp=sharing
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_Ahh6pHa6ObqK87Jr-BqOQfFJRIFbZfONsEGxZ0Qp0j5NWmiLdHh11SvLEUFs01MjyA/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxTf9dZl8mV41V9VGK9fHEHSuvS3iJN4uCRjPYgSPYwkvQKzMoYnHZqGOJN7uSBKwbIPg/exec';
 
 // ===== DOM ELEMENTS =====
 const form = document.getElementById('rsvpForm');
@@ -125,7 +125,8 @@ form.addEventListener('submit', async (e) => {
     const formData = {
         name: nameToSubmit,
         attendance: attendance,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        rowIndex: userSubmissionData ? userSubmissionData.rowIndex : null
     };
 
     // Check if Google Script URL is configured
@@ -152,15 +153,32 @@ form.addEventListener('submit', async (e) => {
             ? currentInviterData.displayName  // Use full display name (e.g., "Tuấn Nguyễn")
             : formData.name;                  // Use manually entered name
 
-        // Customize message based on attendance choice
+        // Customize message based on attendance choice and update status
         let successMessage = '';
+        const isUpdate = userSubmissionData && userSubmissionData.hasSubmitted;
+        const pronoun = currentInviterData ? displayName : 'anh/chị/bạn';
+
         if (attendance === 'Có tham dự') {
-            successMessage = `✓ Cảm ơn ${displayName}! Rất mong được gặp bạn tại buổi lễ!`;
+            successMessage = isUpdate
+                ? `✓ Cảm ơn ${displayName}! Xác nhận của ${pronoun} đã được cập nhật. Rất mong được gặp ${pronoun} tại buổi lễ!`
+                : `✓ Cảm ơn ${displayName}! Rất mong được gặp ${pronoun} tại buổi lễ!`;
         } else {
-            successMessage = `✓ Cảm ơn ${displayName} đã phản hồi. Rất tiếc vì bạn không thể tham dự. Hy vọng sẽ có dịp gặp bạn sau!`;
+            successMessage = isUpdate
+                ? `✓ Cảm ơn ${displayName}! Xác nhận của ${pronoun} đã được cập nhật. Rất tiếc vì ${pronoun} không thể tham dự. Hy vọng sẽ có dịp gặp ${pronoun} sau!`
+                : `✓ Cảm ơn ${displayName} đã phản hồi. Rất tiếc vì ${pronoun} không thể tham dự. Hy vọng sẽ có dịp gặp ${pronoun} sau!`;
         }
 
         showMessage(successMessage, 'success');
+
+        // Update button text after successful submission
+        if (!isUpdate && btnText) {
+            btnText.textContent = 'Cập nhật xác nhận';
+        }
+
+        // Mark as submitted for future updates
+        if (!userSubmissionData) {
+            userSubmissionData = { hasSubmitted: true };
+        }
 
         // Keep the form state after submission - don't reset
         // This helps users understand their submission was successful
@@ -282,6 +300,7 @@ function showContent() {
 
 // Store inviter data globally
 let currentInviterData = null;
+let userSubmissionData = null; // Store existing submission data
 
 // ===== PREFILL FORM WITH INVITER NAME =====
 function prefillFormWithInviterData(inviterName) {
@@ -295,11 +314,58 @@ function prefillFormWithInviterData(inviterName) {
         // Set the value but keep it hidden
         friendNameInput.value = inviterName;
 
-        // Also pre-select "Yes" for better UX
-        if (willAttendYes) {
+        // Also pre-select "Yes" for better UX (only if no existing submission)
+        if (willAttendYes && !userSubmissionData) {
             willAttendYes.checked = true;
         }
     }
+}
+
+// ===== CHECK IF USER ALREADY SUBMITTED =====
+async function checkExistingSubmission(inviterParam) {
+    try {
+        if (!inviterParam || GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+            return null;
+        }
+
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?checkSubmission=true&inviter=${encodeURIComponent(inviterParam)}`);
+        const data = await response.json();
+
+        if (data.status === 'success' && data.hasSubmitted) {
+            return {
+                hasSubmitted: true,
+                attendance: data.attendance,
+                rowIndex: data.rowIndex
+            };
+        }
+
+        return null;
+    } catch (error) {
+        console.error('Error checking existing submission:', error);
+        return null;
+    }
+}
+
+// ===== UPDATE FORM UI FOR EXISTING SUBMISSION =====
+function updateFormForExistingSubmission(submissionData) {
+    if (!submissionData) return;
+
+    // Set the radio button based on existing attendance
+    if (submissionData.attendance === 'Có tham dự') {
+        willAttendYes.checked = true;
+    } else if (submissionData.attendance === 'Không tham dự') {
+        willAttendNo.checked = true;
+    }
+
+    // Change submit button text to indicate update
+    if (btnText) {
+        btnText.textContent = 'Cập nhật xác nhận';
+    }
+
+    // Show a message that they already submitted
+    const basePronoun = currentInviterData ? currentInviterData.displayName : 'anh/chị/bạn';
+    const pronounCapitalized = basePronoun.charAt(0).toUpperCase() + basePronoun.slice(1);
+    showMessage(`ℹ️ ${pronounCapitalized} đã xác nhận trước đó. ${pronounCapitalized} có thể cập nhật lựa chọn của mình.`, 'success');
 }
 
 // ===== LOAD PERSONALIZED MESSAGE ON PAGE LOAD =====
@@ -328,6 +394,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                     urlParam: inviterParam,
                     displayName: data.inviter
                 };
+
+                // Check if user already submitted
+                userSubmissionData = await checkExistingSubmission(inviterParam);
+
+                // Update form UI based on existing submission
+                if (userSubmissionData && userSubmissionData.hasSubmitted) {
+                    updateFormForExistingSubmission(userSubmissionData);
+                }
+
                 prefillFormWithInviterData(data.inviter);
             }
         } catch (error) {

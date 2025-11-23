@@ -31,7 +31,7 @@ function doPost(e) {
       headerRange.setFontColor('#FFFFFF');
     }
 
-    // Prepare row data
+    // Prepare timestamp
     const timestamp = new Date(data.timestamp);
     const formattedTimestamp = Utilities.formatDate(
       timestamp,
@@ -39,25 +39,61 @@ function doPost(e) {
       'dd/MM/yyyy HH:mm:ss'
     );
 
-    const rowData = [
-      formattedTimestamp,
-      data.name,
-      data.attendance
-    ];
+    // Check if this is an update (rowIndex provided)
+    if (data.rowIndex) {
+      // Update existing row
+      sheet.getRange(data.rowIndex, 1).setValue(formattedTimestamp);
+      sheet.getRange(data.rowIndex, 2).setValue(data.name);
+      sheet.getRange(data.rowIndex, 3).setValue(data.attendance);
 
-    // Append the data to the sheet
-    sheet.appendRow(rowData);
+      return ContentService
+        .createTextOutput(JSON.stringify({
+          status: 'success',
+          message: 'RSVP updated successfully',
+          isUpdate: true
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    } else {
+      // Check if user already submitted (by name)
+      const allData = sheet.getDataRange().getValues();
+      for (let i = 1; i < allData.length; i++) {
+        const existingName = allData[i][1] ? allData[i][1].toString().trim().toLowerCase() : '';
+        if (existingName === data.name.toLowerCase()) {
+          // Update existing submission
+          const rowIndex = i + 1; // 1-indexed
+          sheet.getRange(rowIndex, 1).setValue(formattedTimestamp);
+          sheet.getRange(rowIndex, 3).setValue(data.attendance);
 
-    // Auto-resize columns for better readability
-    sheet.autoResizeColumns(1, 3);
+          return ContentService
+            .createTextOutput(JSON.stringify({
+              status: 'success',
+              message: 'RSVP updated successfully',
+              isUpdate: true
+            }))
+            .setMimeType(ContentService.MimeType.JSON);
+        }
+      }
 
-    // Return success response
-    return ContentService
-      .createTextOutput(JSON.stringify({
-        status: 'success',
-        message: 'RSVP recorded successfully'
-      }))
-      .setMimeType(ContentService.MimeType.JSON);
+      // New submission - append row
+      const rowData = [
+        formattedTimestamp,
+        data.name,
+        data.attendance
+      ];
+
+      sheet.appendRow(rowData);
+
+      // Auto-resize columns for better readability
+      sheet.autoResizeColumns(1, 3);
+
+      return ContentService
+        .createTextOutput(JSON.stringify({
+          status: 'success',
+          message: 'RSVP recorded successfully',
+          isUpdate: false
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
 
   } catch (error) {
     // Log error for debugging
@@ -73,12 +109,50 @@ function doPost(e) {
   }
 }
 
-// ===== HANDLE GET REQUESTS - Fetch Personalized Messages =====
+// ===== HANDLE GET REQUESTS - Fetch Personalized Messages & Check Submission Status =====
 function doGet(e) {
   try {
-    // Check if inviter parameter is provided
+    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
     const inviter = e.parameter.inviter;
+    const checkSubmission = e.parameter.checkSubmission;
 
+    // If checkSubmission parameter is provided, check if user already submitted
+    if (checkSubmission && inviter) {
+      const rsvpSheet = spreadsheet.getSheetByName(SHEET_NAME);
+
+      if (rsvpSheet) {
+        const data = rsvpSheet.getDataRange().getValues();
+
+        // Search for existing submission (skip header row)
+        for (let i = 1; i < data.length; i++) {
+          const row = data[i];
+          const submittedName = row[1] ? row[1].toString().trim().toLowerCase() : '';
+          const attendance = row[2] ? row[2].toString().trim() : '';
+
+          // Match by inviter ID
+          if (submittedName === inviter.toLowerCase()) {
+            return ContentService
+              .createTextOutput(JSON.stringify({
+                status: 'success',
+                hasSubmitted: true,
+                attendance: attendance,
+                rowIndex: i + 1 // Store row index for updates (1-indexed)
+              }))
+              .setMimeType(ContentService.MimeType.JSON);
+          }
+        }
+      }
+
+      // No submission found
+      return ContentService
+        .createTextOutput(JSON.stringify({
+          status: 'success',
+          hasSubmitted: false
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Original functionality: fetch personalized message
     if (!inviter) {
       // No inviter specified, return default response
       return ContentService
@@ -91,7 +165,6 @@ function doGet(e) {
     }
 
     // Get the spreadsheet and messages sheet
-    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
     let messagesSheet = spreadsheet.getSheetByName(MESSAGES_SHEET_NAME);
 
     // If messages sheet doesn't exist, return no custom message
@@ -138,7 +211,7 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
-    console.error('Error fetching personalized message:', error);
+    console.error('Error in doGet:', error);
 
     return ContentService
       .createTextOutput(JSON.stringify({
